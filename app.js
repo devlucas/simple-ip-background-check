@@ -7,16 +7,6 @@ const checker = process.argv[4]
 const sourceIpset = process.argv[5]
 const storageFileName = process.argv[6]
 
-const startServer = () => {
-    http.createServer(handler).listen(port, (err) => {
-        if (err) {
-            return console.log('Error: ', err)
-        }
-
-        console.log(`Server is listening on ${port}!`)
-    })
-}
-
 const handler = (req, res) => {
     const ip = req.url.split('/')[1]
 
@@ -27,10 +17,20 @@ const handler = (req, res) => {
     })
 
     checkBlacklistedIp.on('message', blacklisted => {
-        res.end(`IP ${ip} is blacklisted: ${blacklisted ? 'yes' : 'no'} `)
+        res.end(`is ${ip} blacklisted? ${blacklisted ? 'yes' : 'no'} `)
     })
 
     checkBlacklistedIp.send(JSON.stringify({ sourceIpset, storageFileName, ip }))
+}
+
+const startServer = () => {
+    http.createServer(handler).listen(port, (err) => {
+        if (err) {
+            return console.log('Error: ', err)
+        }
+
+        console.log(`Server is listening on ${port}!`)
+    })
 }
 
 if (sourceIpset === 'ignore' || storageFileName === 'ignore') {
