@@ -3,7 +3,7 @@ const Shared = require('mmap-object')
 let sharedBlacklist
 
 function getBlacklist(storageFile) {
-    if (typeof blacklist === 'undefined') {
+    if (typeof sharedBlacklist === 'undefined') {
         sharedBlacklist = new Shared.Open(storageFile)
     }
 
