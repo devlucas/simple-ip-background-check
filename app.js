@@ -18,9 +18,11 @@ const handler = (req, res) => {
 
     checkBlacklistedIp.on('message', blacklisted => {
         res.end(`is ${ip} blacklisted? ${blacklisted ? 'yes' : 'no'} `)
+
+        checkBlacklistedIp.send(JSON.stringify({ command: 'close' }))
     })
 
-    checkBlacklistedIp.send(JSON.stringify({ sourceIpset, storageFileName, ip }))
+    checkBlacklistedIp.send(JSON.stringify({ command: 'checkBlacklist', sourceIpset, storageFileName, ip }))
 }
 
 const startServer = () => {

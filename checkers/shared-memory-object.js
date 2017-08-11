@@ -10,8 +10,18 @@ function getBlacklist(storageFile) {
     return sharedBlacklist
 }
 
-process.on('message', (msg) => {
-    let { storageFileName, ip } = JSON.parse(msg)
-
+function checkBlacklist({ storageFileName, ip }) {
     process.send(typeof getBlacklist(storageFileName)[ip] !== 'undefined')
+}
+
+function close() {
+    process.exit()
+}
+
+const handlers = { checkBlacklist, close }
+
+process.on('message', (msg) => {
+    let payload = JSON.parse(msg)
+
+    handlers[payload.command](payload)
 })

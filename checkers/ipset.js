@@ -6,8 +6,18 @@ function isIpBlocked(ipsetName, ip) {
     return `${result.stderr}`.indexOf('NOT') === -1
 }
 
-process.on('message', (msg) => {
-    let { sourceIpset, ip } = JSON.parse(msg)
-
+function checkBlacklist({ sourceIpset, ip }) {
     process.send(isIpBlocked(sourceIpset.split('.')[0], ip))
+}
+
+function close() {
+    process.exit()
+}
+
+const handlers = { checkBlacklist, close }
+
+process.on('message', (msg) => {
+    let payload = JSON.parse(msg)
+
+    handlers[payload.command](payload)
 })
